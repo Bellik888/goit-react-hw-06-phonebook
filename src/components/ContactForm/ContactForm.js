@@ -3,7 +3,15 @@ import { useState } from 'react';
 import shortid from 'shortid';
 import s from './ContactForm.module.css';
 
-export const ContactForm = ({ searchDuplicate }) => {
+//==========redux========
+import { addContact } from '../../redux/contacts/actions';
+import { useDispatch, useSelector } from 'react-redux';
+import { getContacts } from '../../redux/contacts/selectors';
+
+const ContactForm = () => {
+  const contacts = useSelector(getContacts);
+  const dispatch = useDispatch();
+
   let inputNameID = shortid();
   let inputNumberID = shortid();
 
@@ -15,6 +23,13 @@ export const ContactForm = ({ searchDuplicate }) => {
   };
   const handleChangeNumber = e => {
     setNumber(e.target.value);
+  };
+
+  const searchDuplicate = value => {
+    const names = contacts.map(contact => contact.name);
+    names.includes(value.name)
+      ? alert(`${value.name} is already in contacts!!!`)
+      : dispatch(addContact(value));
   };
 
   const handleSubmit = e => {
@@ -35,6 +50,7 @@ export const ContactForm = ({ searchDuplicate }) => {
     }
     return;
   };
+  // console.log(onAdd)
 
   return (
     <section className={s.section}>
@@ -73,3 +89,19 @@ export const ContactForm = ({ searchDuplicate }) => {
 ContactForm.propTypes = {
   searchDuplicate: PropTypes.func,
 };
+
+export default ContactForm;
+
+// const mapStateToProps = state => {
+//   return {
+//     contacts: state.contacts,
+//   };
+// };
+
+// const mapDispatchToProps = dispatch => {
+//   return {
+//     onAdd:contact=>dispatch(addContact(contact))
+//   }
+// }
+
+// export default connect(mapStateToProps, mapDispatchToProps)(ContactForm)
